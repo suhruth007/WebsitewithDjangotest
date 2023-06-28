@@ -43,22 +43,21 @@ def index(request):
 
 def analyze(request):
     # Get the text
-    djtext = request.GET.get('search', 'default')
+    djtext = request.POST.get('search', 'default')
     """get the 'search' value(default if empty) from the HttpRequest 
     # from client server"""
-    removepunc = request.GET.get('removepunc', 'off')
+    removepunc = request.POST.get('removepunc', 'off')
     """
     get after requesting the value returned by 'removepunc' HttpRequest
     and stored returned value in removepunc variable
     """
-    fullcaps = request.GET.get('fullcaps', 'off')
+    fullcaps = request.POST.get('fullcaps', 'off')
     """
         get after requesting the value returned by 'fullcaps' HttpRequest
         and stored returned value in fullcaps variable 
     """
-    newlineremover = request.GET.get('newlineremover', 'off')
-    spaceremover = request.GET.get('spaceremover', 'off')
-    charcounter = request.GET.get('charcounter', 'off')
+    newlineremover = request.POST.get('newlineremover', 'off')
+    spaceremover = request.POST.get('spaceremover', 'off')
     if removepunc == "on":
         punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         analyzed = ""
@@ -80,7 +79,7 @@ def analyze(request):
     if newlineremover == 'on':
         analyzed = ""
         for char in djtext:
-            if char != "\n":
+            if char != "\n" and char != "\r":
                 analyzed = analyzed + char
 
         params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
@@ -96,7 +95,7 @@ def analyze(request):
 
         djtext = analyzed
         # return render(request, 'analyze.html', params)
-    if not (spaceremover == 'on' and newlineremover == 'on' and fullcaps == "on" and removepunc == "on"):
+    if spaceremover != 'on' and newlineremover != 'on' and fullcaps != "on" and removepunc != "on":
         return HttpResponse('kuch toh select karle bhai')
 
     return render(request, 'analyze.html', params)
