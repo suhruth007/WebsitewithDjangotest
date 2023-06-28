@@ -66,25 +66,27 @@ def analyze(request):
             if char not in punctuations:
                 analyzed = analyzed + char
         params = {'purpose': 'Removed Punctuations', 'analyzed_text': analyzed}  # params stand for parameters
-        return render(request, 'analyze.html', params)
+        djtext = analyzed
+        # return render(request, 'analyze.html', params)
 
-    elif fullcaps == "on":
+    if fullcaps == "on":
         analyzed = ""
         for char in djtext:
             analyzed += char.upper()
         params = {'purpose': 'Change To Uppercase', 'analyzed_text': analyzed}
-        return render(request, 'analyze.html', params)
+        djtext = analyzed
+        # return render(request, 'analyze.html', params)
 
-    elif newlineremover == 'on':
+    if newlineremover == 'on':
         analyzed = ""
         for char in djtext:
             if char != "\n":
                 analyzed = analyzed + char
 
         params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
-        # Analyze the text
-        return render(request, 'analyze.html', params)
-    elif spaceremover == 'on':
+        djtext = analyzed
+        # return render(request, 'analyze.html', params)
+    if spaceremover == 'on':
         analyzed = ""
         for i, char in enumerate(djtext):
             if not (djtext[i] == " " and djtext[i + 1] == " "):
@@ -92,17 +94,18 @@ def analyze(request):
 
         params = {'purpose': 'Removed extra spaces', 'analyzed_text': analyzed}
 
-        # Analyze the text
-        return render(request, 'analyze.html', params)
+        djtext = analyzed
+        # return render(request, 'analyze.html', params)
+    if not (spaceremover == 'on' and newlineremover == 'on' and fullcaps == "on" and removepunc == "on"):
+        return HttpResponse('kuch toh select karle bhai')
 
-    elif charcounter == 'on':
-        chars = {}
-        for i in djtext:
-            if i in chars:
-                chars[i] += 1
-            else:
-                chars.update({i: 1})
-        params = {'purpose': 'character counter', 'analyzed_text': chars}
-        return render(request, 'analyze.html', params)
-    else:
-        return HttpResponse('Error')
+    return render(request, 'analyze.html', params)
+    # if charcounter == 'on':
+    #     chars = {}
+    #     for i in djtext:
+    #         if i in chars:
+    #             chars[i] += 1
+    #         else:
+    #             chars.update({i: 1})
+    #     params = {'purpose': 'character counter', 'analyzed_text': chars}
+    #     return render(request, 'analyze.html', params)
