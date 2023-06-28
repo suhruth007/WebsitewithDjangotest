@@ -58,6 +58,7 @@ def analyze(request):
     """
     newlineremover = request.GET.get('newlineremover', 'off')
     spaceremover = request.GET.get('spaceremover', 'off')
+    charcounter = request.GET.get('charcounter', 'off')
     if removepunc == "on":
         punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         analyzed = ""
@@ -85,12 +86,23 @@ def analyze(request):
         return render(request, 'analyze.html', params)
     elif spaceremover == 'on':
         analyzed = ""
-        for char in djtext:
-            if char != " ":
+        for i, char in enumerate(djtext):
+            if not (djtext[i] == " " and djtext[i + 1] == " "):
                 analyzed = analyzed + char
 
-        params = {'purpose': 'Removed spaces', 'analyzed_text': analyzed}
+        params = {'purpose': 'Removed extra spaces', 'analyzed_text': analyzed}
+
         # Analyze the text
+        return render(request, 'analyze.html', params)
+
+    elif charcounter == 'on':
+        chars = {}
+        for i in djtext:
+            if i in chars:
+                chars[i] += 1
+            else:
+                chars.update({i: 1})
+        params = {'purpose': 'character counter', 'analyzed_text': chars}
         return render(request, 'analyze.html', params)
     else:
         return HttpResponse('Error')
