@@ -44,16 +44,27 @@ def index(request):
 def analyze(request):
     # Get the text
     djtext = request.GET.get('search', 'default')
+    """get the 'search' value(default if empty) from the HttpRequest 
+    # from client server"""
     removepunc = request.GET.get('removepunc', 'off')
+    """
+    get after requesting the value returned by 'removepunc' HttpRequest
+    and stored returned value in removepunc variable
+    """
     fullcaps = request.GET.get('fullcaps', 'off')
+    """
+        get after requesting the value returned by 'fullcaps' HttpRequest
+        and stored returned value in fullcaps variable 
+    """
     newlineremover = request.GET.get('newlineremover', 'off')
+    spaceremover = request.GET.get('spaceremover', 'off')
     if removepunc == "on":
         punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         analyzed = ""
         for char in djtext:
             if char not in punctuations:
                 analyzed = analyzed + char
-        params = {'purpose': 'Removed Punctuations', 'analyzed_text': analyzed}
+        params = {'purpose': 'Removed Punctuations', 'analyzed_text': analyzed}  # params stand for parameters
         return render(request, 'analyze.html', params)
 
     elif fullcaps == "on":
@@ -63,7 +74,23 @@ def analyze(request):
         params = {'purpose': 'Change To Uppercase', 'analyzed_text': analyzed}
         return render(request, 'analyze.html', params)
 
-    elif newlineremover =='on':
-        return HttpResponse('shut the f up')
+    elif newlineremover == 'on':
+        analyzed = ""
+        for char in djtext:
+            if char != "\n":
+                analyzed = analyzed + char
+
+        params = {'purpose': 'Removed NewLines', 'analyzed_text': analyzed}
+        # Analyze the text
+        return render(request, 'analyze.html', params)
+    elif spaceremover == 'on':
+        analyzed = ""
+        for char in djtext:
+            if char != " ":
+                analyzed = analyzed + char
+
+        params = {'purpose': 'Removed spaces', 'analyzed_text': analyzed}
+        # Analyze the text
+        return render(request, 'analyze.html', params)
     else:
         return HttpResponse('Error')
